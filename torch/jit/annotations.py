@@ -288,10 +288,15 @@ def try_ann_to_type(ann, loc):
         elem_type = try_ann_to_type(ann.__args__[0], loc)
         if elem_type:
             return ListType(elem_type)
+        else:
+            warnings.warn("List must have a contained type")
     if is_dict(ann):
         key = try_ann_to_type(ann.__args__[0], loc)
         value = try_ann_to_type(ann.__args__[1], loc)
-        return DictType(key, value)
+        if key and value:
+            return DictType(key, value)
+        else:
+            warnings.warn("Dict must have a key and value type")
     if is_optional(ann):
         if issubclass(ann.__args__[1], type(None)):
             contained = ann.__args__[0]
